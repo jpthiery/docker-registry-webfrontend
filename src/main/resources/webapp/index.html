@@ -1,0 +1,121 @@
+﻿<!doctype html>
+<html lang="fr" ng-app="dockerRegistryApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Docker registry</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>Docker registry frontend</h1>
+    </div>
+
+    <div ng-controller="DockerConfigurationCtrl">
+        <div ng-if="configuration.registries.length" >
+            <div ng-controller="DockerImagesCtrl" >
+                <form role="form" style="margin-bottom: 20px;">
+                    <div class="input-group ">
+                        <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
+                        <input class="form-control" type="text" placeholder="Image name" ng-model="search.imageName">
+
+                        <span class="input-group-btn"><button class="btn btn-default" type="submit" ng-click="search(search.imageName)">Search</button></span>
+                    </div>
+                </form>
+                <p style="margin-top: 20px;" ng-if="!images.length">No result to display.</p>
+                <accordion close-others="false">
+                    <accordion-group is-open="status.open"  ng-repeat="image in images" >
+                        <accordion-heading >
+                            {{image.name}} <i class="pull-right fa" ng-class="{'fa-chevron-up': status.open, 'fa-chevron-down': !status.open}" ></i>
+                        </accordion-heading>
+                        <div ng-controller="DockerImagesInfo">
+                            <label for="author" class="col-sm-2 control-label">Author :</label>
+                            <div class="col-sm-10" style="margin-bottom:20px">
+                                <input type="text" class="form-control" id="author" value="{{imagedetail.author}}" readonly>
+                            </div>
+
+                            <label for="created" class="col-sm-2 control-label">Created :</label>
+                            <div class="col-sm-4" style="margin-bottom:20px">
+                                <input type="text" class="form-control" id="created" value="{{imagedetail.created}}" readonly>
+                            </div>
+
+                            <div  ng-if="imagedetail.docker_version">
+                                <label for="version" class="col-sm-2 control-label">Docker version : </label>
+                                <div class="col-sm-4" style="margin-bottom:20px">
+                                    <input type="text" class="form-control" id="version" value="{{imagedetail.docker_version}}" readonly>
+                                </div>
+                            </div>
+                            <div  ng-if="imagedetail.Size">
+                                <label for="size" class="col-sm-2 control-label">Size : </label>
+                                <div class="col-sm-10" style="margin-bottom:20px">
+                                    <input type="text" class="form-control" id="size" value="{{imagedetail.Size | bytes}}" readonly>
+                                </div>
+                            </div>
+
+                            <div  ng-if="imagedetail.config.Volumes">
+                                <label class="col-sm-2 control-label">Volumes :</label>
+                                <div class="col-sm-10" style="margin-bottom:20px">
+                                    <ul ng-repeat="(volume, dest) in imagedetail.config.Volumes">
+                                        <li>{{volume}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div  ng-if="imagedetail.config.Entrypoint">
+                                <label for="entrypoint" class="col-sm-2 control-label">Entrypoint :</label>
+                                <div class="col-sm-10" style="margin-bottom:20px">
+                                    <input type="text" class="form-control" id="entrypoint" value="{{imagedetail.config.Entrypoint}}" disabled>
+                                </div>
+                            </div>
+
+                            <div  ng-if="imagedetail.config.Cmd">
+                                <label for="cmd" class="col-sm-2 control-label">Command :</label>
+                                <div class="col-sm-10" style="margin-bottom:20px">
+                                    <input type="text" class="form-control" id="cmd" value="{{imagedetail.config.Cmd}}" disabled>
+                                </div>
+                            </div>
+
+                            <div  ng-if="imagedetail.config.WorkingDir">
+                                <label for="workingdir" class="col-sm-2 control-label">Working directory :</label>
+                                <div class="col-sm-10" style="margin-bottom:20px">
+                                    <input type="text" class="form-control" id="workingdir" value="{{imagedetail.config.WorkingDir}}" disabled>
+                                </div>
+                            </div>
+
+                            <div  ng-if="imagedetail.config.ExposedPorts">
+                                <label class="col-sm-2 control-label">Exposed Ports :</label>
+                                <div class="col-sm-10" style="margin-bottom:20px">
+                                    <ul ng-repeat="(port, dest) in imagedetail.config.ExposedPorts">
+                                        <li>{{port}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div  ng-if="imagedetail.config.Env">
+                                <label class="col-sm-2 control-label">Environment :</label>
+                                <div class="col-sm-10" style="margin-bottom:20px">
+                                    <ul ng-repeat="envVar in imagedetail.config.Env">
+                                        <li>{{envVar}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+
+            </div>
+        </div>
+        <div ng-if="!configuration.registries.length">
+            <p>No registry configured.</p>
+        </div>
+    </div>
+
+</div>
+<script src="js/angular.min.js"></script>
+<script src="js/ui-bootstrap.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
